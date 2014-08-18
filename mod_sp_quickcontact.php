@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
+// Include the syndicate functions only once
 JHtml::_('jquery.framework');
 
 $uniqid				= $module->id;
