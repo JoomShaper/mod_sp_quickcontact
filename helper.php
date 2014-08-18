@@ -13,19 +13,24 @@ class modSpQuickcontactHelper
 	public static function getAjax()
 	{
 		jimport('joomla.application.module.helper');
-		$input  		= JFactory::getApplication()->input;
-		$module 		= JModuleHelper::getModule('sp_quickcontact');
-		$params 		= new JRegistry();
+		$input  			= JFactory::getApplication()->input;
+		$module 			= JModuleHelper::getModule('sp_quickcontact');
+		$params 			= new JRegistry();
 		$params->loadString($module->params);
 
-		$mail 			= JFactory::getMailer();
+		$mail 				= JFactory::getMailer();
 
-		$success 		= $params->get('success');
-		$failed 		= $params->get('failed');
-		$recipient 		= $params->get('email');
+		$success 			= $params->get('success');
+		$failed 			= $params->get('failed');
+		$recipient 			= $params->get('email');
+		$failed_captcha 	= $params->get('failed_captcha');
+
+		$formcaptcha		= $params->get('formcaptcha', 1);
+		$captcha_question	= $params->get('captcha_question');
+		$captcha_answer		= $params->get('captcha_answer');
 
 		//inputs
-		$inputs 		= $input->get('data', array(), 'ARRAY');
+		$inputs 			= $input->get('data', array(), 'ARRAY');
 
 		foreach ($inputs as $input) {
 			
@@ -49,6 +54,19 @@ class modSpQuickcontactHelper
 				$message 			= nl2br( $input['value'] );
 			}
 
+			if($formcaptcha) {
+				if( $input['name'] == 'sccaptcha' )
+				{
+					$sccaptcha 		= $input['value'];
+				}
+			}
+
+		}
+
+		if($formcaptcha) {
+			if ($sccaptcha != $captcha_answer) {
+				return '<p class="sp_qc_warn">' . $failed_captcha . '</p>';
+			}
 		}
 
 		$sender 		= array($email, $name);	
@@ -58,11 +76,11 @@ class modSpQuickcontactHelper
 		$mail->isHTML(true);
 		$mail->Encoding = 'base64';	
 		$mail->setBody($message);
-		 
+
 		if ($mail->Send()) {
-		  	return '<p class="sp_qc_success">' . $success . '</p>';
+			return '<p class="sp_qc_success">' . $success . '</p>';
 		} else {
-		   	return '<p class="sp_qc_warn">' . $failed . '</p>';
+			return '<p class="sp_qc_warn">' . $failed . '</p>';
 		}
 	}
 }

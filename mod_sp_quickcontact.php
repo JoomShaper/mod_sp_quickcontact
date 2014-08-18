@@ -3,7 +3,7 @@
 # mod_sp_quickcontact - Ajax based quick contact Module by JoomShaper.com
 # ------------------------------------------------------------------------
 # Author    JoomShaper http://www.joomshaper.com
-# Copyright (C) 2010 - 2012 JoomShaper.com. All Rights Reserved.
+# Copyright (C) 2010 - 2014 JoomShaper.com. All Rights Reserved.
 # License - http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 # Websites: http://www.joomshaper.com
 */
@@ -20,10 +20,10 @@ $email_text			= JText::_('EMAIL');
 $subject_text		= JText::_('SUBJECT');
 $msg_text			= JText::_('MESSAGE');
 $send_msg			= JText::_('SEND_MESSAGE');
-$err_msg			= JText::_('ERR_MSG');
-$email_warn			= JText::_('EMAIL_WARN');
-$wait_text			= JText::_('WAIT_TEXT');
-$failed_text		= JText::_('FAILED_TEXT');
+
+$formcaptcha		= $params->get('formcaptcha', 1);
+$captcha_question	= $params->get('captcha_question');
+$captcha_answer		= $params->get('captcha_answer');
 
 $document 			= JFactory::getDocument();
 $document->addScript(JURI::base(true) . '/modules/mod_sp_quickcontact/assets/js/script.js');
