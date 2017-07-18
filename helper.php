@@ -1,7 +1,7 @@
 <?php
 /*
 # mod_sp_quickcontact - Ajax based quick contact Module by JoomShaper.com
-# -----------------------------------------------------------------------	
+# -----------------------------------------------------------------------  
 # Author    JoomShaper http://www.joomshaper.com
 # Copyright (C) 2010 - 2014 JoomShaper.com. All Rights Reserved.
 # License - http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -10,77 +10,93 @@
 
 class modSpQuickcontactHelper
 {
-	public static function getAjax()
-	{
-		jimport('joomla.application.module.helper');
-		$input  			= JFactory::getApplication()->input;
-		$module 			= JModuleHelper::getModule('sp_quickcontact');
-		$params 			= new JRegistry();
-		$params->loadString($module->params);
+  public static function getAjax()
+  {
+    jimport('joomla.application.module.helper');
+    $input                = JFactory::getApplication()->input;
+    $module               = JModuleHelper::getModule('sp_quickcontact');
+    $params               = new JRegistry();
 
-		$mail 				= JFactory::getMailer();
+    $params->loadString($module->params);
 
-		$success 			= $params->get('success');
-		$failed 			= $params->get('failed');
-		$recipient 			= $params->get('email');
-		$failed_captcha 	= $params->get('failed_captcha');
+    $mail                 = JFactory::getMailer();
 
-		$formcaptcha		= $params->get('formcaptcha', 1);
-		$captcha_question	= $params->get('captcha_question');
-		$captcha_answer		= $params->get('captcha_answer');
+    $success              = $params->get('success');
+    $failed               = $params->get('failed');
+    $recipient            = $params->get('email');
+    $failed_captcha       = $params->get('failed_captcha');
 
-		//inputs
-		$inputs 			= $input->get('data', array(), 'ARRAY');
+    $formcaptcha          = $params->get('formcaptcha', 1);
+    $captcha_question     = $params->get('captcha_question');
+    $captcha_answer       = $params->get('captcha_answer');
 
-		foreach ($inputs as $input) {
-			
-			if( $input['name'] == 'email' )
-			{
-				$email 			= $input['value'];
-			}
+    $recaptcha            = $params->get('recaptcha', 1);
+    $recaptcha_site_key   = $params->get('recaptcha_site_key', '');
+    $recaptcha_secret_key = $params->get('recaptcha_secret_key', '');
+    $recaptcha_response   = "";
 
-			if( $input['name'] == 'name' )
-			{
-				$name 			= $input['value'];
-			}
+    //inputs
+    $inputs       = $input->get('data', array(), 'ARRAY');
 
-			if( $input['name'] == 'subject' )
-			{
-				$subject 			= $input['value'];
-			}
+    foreach ($inputs as $input) {
+      
+      if ($input['name'] == 'email') {
+        $email = $input['value'];
+      }
 
-			if( $input['name'] == 'message' )
-			{
-				$message 			= nl2br( $input['value'] );
-			}
+      if ($input['name'] == 'name') {
+        $name = $input['value'];
+      }
 
-			if($formcaptcha) {
-				if( $input['name'] == 'sccaptcha' )
-				{
-					$sccaptcha 		= $input['value'];
-				}
-			}
+      if ($input['name'] == 'subject') {
+        $subject = $input['value'];
+      }
 
-		}
+      if ($input['name'] == 'message') {
+        $message = nl2br($input['value']);
+      }
 
-		if($formcaptcha) {
-			if ($sccaptcha != $captcha_answer) {
-				return '<p class="sp_qc_warn">' . $failed_captcha . '</p>';
-			}
-		}
+      if ($formcaptcha) {
+        if ($input['name'] == 'sccaptcha') {
+          $sccaptcha     = $input['value'];
+        }
+      }
 
-		$sender 		= array($email, $name);	
-		$mail->setSender($sender);
-		$mail->addRecipient($recipient);
-		$mail->setSubject($subject);
-		$mail->isHTML(true);
-		$mail->Encoding = 'base64';	
-		$mail->setBody($message);
+      if ($recaptcha) {
+        if ($input['name'] == 'g-recaptcha-response') {
+          $recaptcha_response = $input['value'];
+        }
+      }
+    }
 
-		if ($mail->Send()) {
-			return '<p class="sp_qc_success">' . $success . '</p>';
-		} else {
-			return '<p class="sp_qc_warn">' . $failed . '</p>';
-		}
-	}
+    if ($formcaptcha) {
+      if ($sccaptcha != $captcha_answer) {
+        return '<p class="sp_qc_warn">' . $failed_captcha . '</p>';
+      }
+    }
+
+    if ($recaptcha) {
+      require_once __DIR__ . '/recaptchalib.php';
+      $reCaptcha = new ReCaptcha($recaptcha_secret_key);
+
+      $resp = $reCaptcha->verifyResponse($_SERVER["REMOTE_ADDR"], $recaptcha_response);
+      if (! $resp->success) {
+        return '<p class="sp_qc_warn">' . $failed_captcha . var_export($resp, true) . var_export($input, true) . '</p>';
+      }
+    }
+
+    $sender     = array($email, $name);  
+    $mail->setSender($sender);
+    $mail->addRecipient($recipient);
+    $mail->setSubject($subject);
+    $mail->isHTML(true);
+    $mail->Encoding = 'base64';  
+    $mail->setBody($message);
+
+    if ($mail->Send()) {
+      return '<p class="sp_qc_success">' . $success . '</p>';
+    } else {
+      return '<p class="sp_qc_warn">' . $failed . '</p>';
+    }
+  }
 }

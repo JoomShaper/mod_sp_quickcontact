@@ -7,7 +7,7 @@
 	<license>PHP files are licensed under  GNU/GPL V2, CSS  - JS - IMAGE files  are Copyrighted material</license>
 	<authorEmail>support@joomshaper.com</authorEmail>
 	<authorUrl>www.joomshaper.com</authorUrl>
-	<version>1.4</version>
+	<version>1.5</version>
 	<description>SP Quick Contact - Ajax based Quick Contact Module for Joomla!</description>
 	<languages>
 		<language tag="en-GB">language/en-GB.mod_sp_quickcontact.ini</language>
@@ -15,6 +15,7 @@
 	<files>
 		<filename module="mod_sp_quickcontact">mod_sp_quickcontact.php</filename>
 		<filename>helper.php</filename>
+		<filename>recaptchalib.php</filename>
 		<filename>index.html</filename>
 		<folder>language</folder>
 		<folder>tmpl</folder>
@@ -33,6 +34,12 @@
 				<field name="captcha_question" type="text" default="3 + 4 = ?" label="CAPTCHA_QUESTION" />
 				<field name="captcha_answer" type="text" default="7" label="CAPTCHA_ANSWER" />
 				<field name="failed_captcha" type="text" default="You have entered wrong captcha. Please try again." label="WRONG_CAPTCHA" />
+        <field name="recaptcha" type="radio" class="btn-group" default="1" label="RECAPTCHA" description="RECAPTCHA_DESC">
+          <option value="1">JYES</option>
+          <option value="0">JNO</option>
+        </field>
+        <field name="recaptcha_site_key" type="text" default="" label="RECAPTCHA_SITE_KEY" />
+        <field name="recaptcha_secret_key" type="text" default="" label="RECAPTCHA_SECRET_KEY" />
 			</fieldset>
 			
 			<fieldset name="advanced">
