@@ -23,9 +23,12 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 		<div class="sp_qc_clr"></div>
 		<textarea name="message" id="message" onfocus="if (this.value=='<?php echo $msg_text ?>') this.value='';" onblur="if (this.value=='') this.value='<?php echo $msg_text ?>';" cols="" rows=""><?php echo $msg_text ?></textarea>	
 		<div class="sp_qc_clr"></div>
-		<?php if($formcaptcha) { ?>
+		<?php if ($formcaptcha) { ?>
 			<input type="text" name="sccaptcha" placeholder="<?php echo $captcha_question ?>" required />
 		<?php } ?>
+    <?php if ($recaptcha) { ?>
+      <div class="g-recaptcha" data-sitekey="<?php echo $recaptcha_site_key ?>"></div>
+    <?php } ?>
 		<div class="sp_qc_clr"></div>
 		<input id="sp_qc_submit" class="button" type="submit" value="<?php echo $send_msg ?>" />
 		<div class="sp_qc_clr"></div>

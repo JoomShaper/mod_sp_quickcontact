@@ -14,20 +14,28 @@ defined('_JEXEC') or die;
 // Include the syndicate functions only once
 JHtml::_('jquery.framework');
 
-$uniqid				= $module->id;
-$name_text			= JText::_('NAME');
-$email_text			= JText::_('EMAIL');
-$subject_text		= JText::_('SUBJECT');
-$msg_text			= JText::_('MESSAGE');
-$send_msg			= JText::_('SEND_MESSAGE');
+$uniqid        = $module->id;
+$name_text      = JText::_('NAME');
+$email_text      = JText::_('EMAIL');
+$subject_text    = JText::_('SUBJECT');
+$msg_text      = JText::_('MESSAGE');
+$send_msg      = JText::_('SEND_MESSAGE');
 
-$formcaptcha		= $params->get('formcaptcha', 1);
-$captcha_question	= $params->get('captcha_question');
-$captcha_answer		= $params->get('captcha_answer');
+$formcaptcha    = $params->get('formcaptcha', 1);
+$captcha_question  = $params->get('captcha_question');
+$captcha_answer    = $params->get('captcha_answer');
 
-$document 			= JFactory::getDocument();
+$recaptcha          = $params->get('recaptcha', 1);
+$recaptcha_site_key = $params->get('recaptcha_site_key', '');
+$recaptcha_secret_key = $params->get('recaptcha_secret_key', '');
+
+$document       = JFactory::getDocument();
 $document->addScript(JURI::base(true) . '/modules/mod_sp_quickcontact/assets/js/script.js');
 $document->addStylesheet(JURI::base(true) . '/modules/mod_sp_quickcontact/assets/css/style.css');
+
+if ($recaptcha) {
+  $document->addScript('https://www.google.com/recaptcha/api.js', 'text/javascript', false, true);
+}
 
 // Include the helper.
 require_once __DIR__ . '/helper.php';
