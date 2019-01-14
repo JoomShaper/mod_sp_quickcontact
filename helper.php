@@ -19,6 +19,7 @@ class modSpQuickcontactHelper
 		$params->loadString($module->params);
 
 		$mail 				= JFactory::getMailer();
+		$config                         = JFactory::getConfig();
 
 		$success 			= $params->get('success');
 		$failed 			= $params->get('failed');
@@ -69,8 +70,8 @@ class modSpQuickcontactHelper
 			}
 		}
 
-		$sender 		= array($email, $name);	
-		$mail->setSender($sender);
+              	$mail->setSender([$config->get('fromemail'), $name]);
+                $mail->addReplyTo($email);
 		$mail->addRecipient($recipient);
 		$mail->setSubject($subject);
 		$mail->isHTML(true);
